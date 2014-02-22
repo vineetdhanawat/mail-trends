@@ -21,7 +21,7 @@ def GetOptsMap():
       "username=", "password=", "use_ssl", "server=", 
 
       # Other params
-      "filter_out=", "me=",
+      "filter_out=", "me=", "label=",
       
       # Development options
       "record", "replay", 
@@ -51,10 +51,16 @@ def GetMessageInfos(opts):
       "random_subset" in opts)
   
   # First, get all message infos
-  m.SelectAllMail()
-  
-  message_infos = m.GetMessageInfos()
-  
+  message_infos = []
+  if "label" not in opts:
+    m.SelectAllMail()
+    message_infos = m.GetMessageInfos()
+  else:
+    lablestable = opts["label"].split(",")
+    for lables in lablestable:
+      m.SelectMailbox(lables)
+      message_infos += m.GetMessageInfos()
+
   # Then for each mailbox, see which messages are in it, and attach that to 
   # the mail info
   if "skip_labels" not in opts:
